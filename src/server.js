@@ -11,11 +11,8 @@ const PORT = process.env.PORT;
 
 app.use(Express.json());
 app.use("/api/auth", routerAuth);
+app.use("/api", middlewareAuth.routerProtected);
 
-app.use("/api/protected", middlewareAuth, (req, res) => {
-  res.status(200).json({ message: "Authorized", user: req.user });
-  next();
-});
 
 database.sync().then(() => {
   console.log("Database connected");

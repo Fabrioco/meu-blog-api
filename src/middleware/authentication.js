@@ -1,6 +1,8 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const Express = require("express");
+const routerProtected = Express.Router();
 
 const middlewareAuth = async (req, res, next) => {
   const token = req.headers.authorization.split(" ")[1];
@@ -24,4 +26,8 @@ const middlewareAuth = async (req, res, next) => {
   }
 };
 
-module.exports = middlewareAuth;
+routerProtected.get("/protected", middlewareAuth, (req, res) => {
+  res.status(200).json({ authenticated: true });
+});
+
+module.exports = { middlewareAuth, routerProtected };
