@@ -5,7 +5,7 @@ const Express = require("express");
 const routerProtected = Express.Router();
 
 const middlewareAuth = async (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
+  const token = req.cookies.token;
   if (!token) {
     return res.status(401).json({ message: "token not found" });
   }
