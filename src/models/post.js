@@ -1,17 +1,18 @@
-const { DataTypes, Sequelize } = require("sequelize");
+const { DataTypes } = require("sequelize");
+const database = require("../config/db");
 
-const Post = new Sequelize.define("posts", {
+const Post = database.define("posts", {
   title: {
     type: DataTypes.STRING,
     allowNull: false,
   },
   description: {
     type: DataTypes.TEXT,
-    allowNull: false,
+    allowNull: true,
   },
   image: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   likes: {
     type: DataTypes.INTEGER,
