@@ -16,7 +16,16 @@ routerAuth.post("/register", async (req, res) => {
 
     const cryptoPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: cryptoPassword });
-    res.status(201).json({ user, message: "User created successfully" });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
+
+    res.cookie("token", token, { httpOnly: true });
+    res
+      .status(201)
+      .json({
+        user,
+        token,
+        message: "Token created. User created successfully",
+      });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -35,10 +44,19 @@ routerAuth.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid password" });
     }
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-    res.status(200).json({ user, token });
+
+    res.cookie("token", token, { httpOnly: true });
+    res
+      .status(200)
+      .json({ user, token, message: "Token created. Login successful" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+});
+
+routerAuth.get("/logout", (req, res) => {
+  res.cookie("token", "", { httpOnly: true });
+  res.status(200).json({ message: "TOken deleted. Logout successful" });
 });
 
 module.exports = routerAuth;
