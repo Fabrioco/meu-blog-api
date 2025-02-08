@@ -5,6 +5,7 @@ const middlewareAuth = require("./middleware/authentication");
 const User = require("./models/user");
 require("dotenv").config();
 const cookieParse = require("cookie-parser");
+const routerPost = require("./routes/post");
 
 const PORT = process.env.PORT;
 
@@ -14,6 +15,7 @@ app.use(cookieParse());
 app.use(Express.json());
 app.use("/api/auth", routerAuth);
 app.use("/api", middlewareAuth.routerProtected);
+app.use("/api/posts", routerPost);
 
 database.sync({ force: false }).then(() => {
   console.log("Database connected");
