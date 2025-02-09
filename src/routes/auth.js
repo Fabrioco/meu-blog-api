@@ -19,15 +19,13 @@ routerAuth.post("/register", async (req, res) => {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
 
     res.cookie("token", token, { httpOnly: true });
-    res
-      .status(201)
-      .json({
-        user,
-        token,
-        message: "Token created. User created successfully",
-      });
+    res.status(201).json({
+      authenticated: true,
+      token,
+      message: "Registration successful",
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ authenticated: false, message: error.message });
   }
 });
 
@@ -48,9 +46,9 @@ routerAuth.post("/login", async (req, res) => {
     res.cookie("token", token, { httpOnly: true });
     res
       .status(200)
-      .json({ user, token, message: "Token created. Login successful" });
+      .json({ authenticated: true, token, message: "Login successful" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ authenticated: false, message: error.message });
   }
 });
 

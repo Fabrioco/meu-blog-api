@@ -6,11 +6,19 @@ const User = require("./models/user");
 require("dotenv").config();
 const cookieParse = require("cookie-parser");
 const routerPost = require("./routes/post");
+const cors = require("cors");
 
 const PORT = process.env.PORT;
 
 const app = Express();
 
+app.use(
+  cors({
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(cookieParse());
 app.use(Express.json());
 app.use("/api/auth", routerAuth);

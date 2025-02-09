@@ -27,7 +27,7 @@ const middlewareAuth = async (req, res, next) => {
 };
 
 routerProtected.get("/protected", middlewareAuth, (req, res) => {
-  res.status(200).json({ authenticated: true });
+  res.status(200).json({ authenticated: true, user: req.user });
 });
 
 module.exports = { middlewareAuth, routerProtected };
