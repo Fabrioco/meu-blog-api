@@ -7,6 +7,7 @@ require("dotenv").config();
 const cookieParse = require("cookie-parser");
 const routerPost = require("./routes/post");
 const cors = require("cors");
+const routerUser = require("./routes/user");
 
 const PORT = process.env.PORT;
 
@@ -24,6 +25,7 @@ app.use(Express.json());
 app.use("/api/auth", routerAuth);
 app.use("/api", middlewareAuth.routerProtected);
 app.use("/api/posts", routerPost);
+app.use("/api/users", routerUser);
 
 database.sync({ force: false }).then(() => {
   console.log("Database connected");
