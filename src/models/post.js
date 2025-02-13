@@ -15,9 +15,8 @@ const Post = database.define("posts", {
     allowNull: true,
   },
   likes: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.ARRAY(DataTypes.INTEGER),
     allowNull: false,
-    defaultValue: 0,
   },
   user_id: {
     type: DataTypes.INTEGER,
