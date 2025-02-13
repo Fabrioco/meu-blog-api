@@ -101,14 +101,44 @@ routerPost.get("/:postId/comments", async (req, res) => {
 
 routerPost.put("/like/:id", middlewareAuth, async (req, res) => {
   const { id } = req.params;
-  const post = await Post.findOne({ where: { id } });
-  if (!post) {
-    return res.status(404).json({ message: "Post not found" });
+
+  try {
+    const post = await Post.findOne({ where: { id } });
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    post.likes = Array.isArray(post.likes) ? post.likes : [];
+
+    const isLiked = post.likes.includes(req.user.id);
+    if (isLiked) {
+      return res.status(400).json({ message: "Post already liked" });
+    }
+
+    post.likes = [...post.likes, req.user.id];
+
+    await post.update({ likes: post.likes });
+    res.status(200).json({ post });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
-  post.likes += 1;
-  await post.save();
-  res.status(200).json({ post });
 });
+
+const verifyLike = async (post_id, user_id) => {
+  try {
+    const post = await Post.findOne({ where: { id: post_id } });
+    if (!post) {
+      return false;
+    }
+    const isLiked = post.likes.includes(user_id);
+    return isLiked;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
 
 routerPost.put("/dislike/:id", middlewareAuth, async (req, res) => {
   const { id } = req.params;
@@ -116,7 +146,13 @@ routerPost.put("/dislike/:id", middlewareAuth, async (req, res) => {
   if (!post) {
     return res.status(404).json({ message: "Post not found" });
   }
-  post.likes -= 1;
+
+  const isLiked = await verifyLike(id, req.user.id);
+  if (!isLiked) {
+    return res.status(400).json({ message: "Post not liked" });
+  }
+
+  post.likes = post.likes.filter((like) => like !== req.user.id);
   await post.save();
   res.status(200).json({ post });
 });
