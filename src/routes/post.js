@@ -99,4 +99,26 @@ routerPost.get("/:postId/comments", async (req, res) => {
   }
 });
 
+routerPost.put("/like/:id", middlewareAuth, async (req, res) => {
+  const { id } = req.params;
+  const post = await Post.findOne({ where: { id } });
+  if (!post) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+  post.likes += 1;
+  await post.save();
+  res.status(200).json({ post });
+});
+
+routerPost.put("/dislike/:id", middlewareAuth, async (req, res) => {
+  const { id } = req.params;
+  const post = await Post.findOne({ where: { id } });
+  if (!post) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+  post.likes -= 1;
+  await post.save();
+  res.status(200).json({ post });
+});
+
 module.exports = routerPost;
