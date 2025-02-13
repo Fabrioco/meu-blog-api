@@ -99,6 +99,28 @@ routerPost.get("/:postId/comments", async (req, res) => {
   }
 });
 
+routerPost.delete("/comment/:id", middlewareAuth, async (req, res) => {
+  const { id } = req.params;
+  const comment = await Comment.findOne({ where: { id } });
+  if (!comment) {
+    return res.status(404).json({ message: "Comment not found" });
+  }
+  if (comment.user_id !== req.user.id) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  await comment.destroy();
+  res.status(200).json({ message: "Comment deleted successfully" });
+});
+
+routerPost.put("/comment/:id", middlewareAuth, async (req, res) => {
+  const { id } = req.params;
+  const { comment } = req.body;
+  const commentUpdated = await Comment.update({ comment }, { where: { id } });
+  res.status(200).json({ commentUpdated });
+});
+  
+
+
 routerPost.put("/like/:id", middlewareAuth, async (req, res) => {
   const { id } = req.params;
 
